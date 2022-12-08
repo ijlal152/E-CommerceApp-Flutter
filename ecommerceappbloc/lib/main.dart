@@ -1,5 +1,6 @@
 import 'package:ecommerceappbloc/NewCode/NavigationBar/Bottom_Navigation_bar.dart';
 import 'package:ecommerceappbloc/bloc/auth_bloc/auth_bloc.dart';
+import 'package:ecommerceappbloc/bloc/calculateSum/calculate_sum_cubit.dart';
 import 'package:ecommerceappbloc/bloc/cart_bloc/cart_bloc.dart';
 import 'package:ecommerceappbloc/bloc/counter_bloc/counter_bloc.dart';
 import 'package:ecommerceappbloc/bloc/exports.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => AuthBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
         BlocProvider(create: (context) => CartBloc()),
-        BlocProvider(create: (context) => CounterBloc()),
+        BlocProvider(create: (context) => CalculateSumCubit()),
       ],
       child: RepositoryProvider(
         create: (context) => AuthRepository(),

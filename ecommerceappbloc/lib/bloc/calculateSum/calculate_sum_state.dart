@@ -1,17 +1,28 @@
-part of 'calculate_sum_bloc.dart';
+part of 'calculate_sum_cubit.dart';
 
-class CalculateSumState extends Equatable {
-  final int sum;
-  const CalculateSumState({required this.sum});
+
+class CalculateSumState extends Equatable{
+  double sum;
+
+  CalculateSumState({
+    this.sum = 0,
+  });
 
   @override
   // TODO: implement props
-  List<Object> get props => [];
-}
+  List<Object> get props => [sum];
 
-class CalculateSumInitial extends CalculateSumState {
-  CalculateSumInitial({required super.sum});
+  Map<String, dynamic> toMap() {
+    return {
+      "sum": sum,
+    };
+  }
 
-  @override
-  List<Object> get props => [];
+  factory CalculateSumState.fromJson(Map<String, dynamic> map) {
+    return CalculateSumState(
+      sum: map["sum"]?.toDouble() ?? 0,
+    );
+  }
+
+
 }

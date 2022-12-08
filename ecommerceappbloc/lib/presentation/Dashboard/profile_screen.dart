@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:ecommerceappbloc/bloc/auth_bloc/auth_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 typedef ProfileOptionTap = void Function();
 
@@ -46,6 +49,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool _isDark = false;
 
+  void logout(){
+    context.read<AuthBloc>().add(SignOutRequested());
+  }
+
   get datas => <ProfileOption>[
     ProfileOption.arrow(title: 'Edit Profile', icon: _profileIcon('user@2x.png')),
     ProfileOption.arrow(title: 'Adress', icon: _profileIcon('location@2x.png')),
@@ -60,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Logout',
       icon: _profileIcon('logout@2x.png'),
       titleColor: const Color(0xFFF75555),
-      onClick: () => context.read<AuthBloc>().add(SignOutRequested())
+      onClick: () { logout(); }
     ),
   ];
 
@@ -80,7 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Image.asset('assets/icons/profile/arrow_right@2x.png', scale: 2)
           ],
         ),
-      ));
+      ),
+  );
 
   _darkModel() => ProfileOption(
       title: 'Dark Mode',
@@ -134,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       leading: Image.asset(data.icon, scale: 2),
       title: Text(
         data.title,
-        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: data.titleColor),
+        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.sp, color: data.titleColor),
       ),
       trailing: data.trailing,
       onTap: () {},
