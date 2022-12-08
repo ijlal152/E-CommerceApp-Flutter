@@ -6,19 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-typedef ProfileOptionTap = void Function();
+//typedef onTap = void Function();
+
+//VoidCallback ontap;
 
 class ProfileOption {
   String title;
   String icon;
   Color? titleColor;
-  ProfileOptionTap? onClick;
+  VoidCallback? onTap;
   Widget? trailing;
 
   ProfileOption({
     required this.title,
     required this.icon,
-    this.onClick,
+    this.onTap,
     this.titleColor,
     this.trailing,
   });
@@ -26,7 +28,7 @@ class ProfileOption {
   ProfileOption.arrow({
     required this.title,
     required this.icon,
-    this.onClick,
+    this.onTap,
     this.titleColor = const Color(0xFF212121),
     this.trailing = const Image(
         image: AssetImage('assets/icons/profile/arrow_right@2x.png'), width: 24, height: 24),
@@ -49,13 +51,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   bool _isDark = false;
 
-  void logout(){
-    context.read<AuthBloc>().add(SignOutRequested());
-  }
+  // void logout(){
+  //   print('logout print');
+  //
+  // }
 
   get datas => <ProfileOption>[
     ProfileOption.arrow(title: 'Edit Profile', icon: _profileIcon('user@2x.png')),
-    ProfileOption.arrow(title: 'Adress', icon: _profileIcon('location@2x.png')),
+    ProfileOption.arrow(title: 'Address', icon: _profileIcon('location@2x.png')),
     ProfileOption.arrow(title: 'Notification', icon: _profileIcon('notification@2x.png')),
     ProfileOption.arrow(title: 'Payment', icon: _profileIcon('wallet@2x.png')),
     ProfileOption.arrow(title: 'Security', icon: _profileIcon('shield_done@2x.png')),
@@ -67,8 +70,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Logout',
       icon: _profileIcon('logout@2x.png'),
       titleColor: const Color(0xFFF75555),
-      onClick: () { logout(); }
+      onTap: () => context.read<AuthBloc>().add(SignOutRequested())
     ),
+
   ];
 
   _languageOption() => ProfileOption(
@@ -106,7 +110,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
+      body: BlocBuilder<AuthBloc, AuthState>(
+  builder: (context, state) {
+    return CustomScrollView(
         slivers: [
           const SliverList(
             delegate: SliverChildListDelegate.fixed([
@@ -118,7 +124,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           _buildBody(),
         ],
-      ),
+      );
+  },
+),
     );
   }
 
@@ -145,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18.sp, color: data.titleColor),
       ),
       trailing: data.trailing,
-      onTap: () {},
+      onTap: () {context.read<AuthBloc>().add(SignOutRequested());},
     );
   }
 }
