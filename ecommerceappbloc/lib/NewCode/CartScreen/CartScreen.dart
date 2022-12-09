@@ -30,7 +30,6 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context, st) {
         double total = st.sum;
 
-
         return BlocBuilder<CartBloc, CartState>(builder: (context, state) {
           List<SofaModel> sofaList = state.cartItem;
 
@@ -87,7 +86,8 @@ class _CartScreenState extends State<CartScreen> {
                           sofaList[index].totalPrice =
                               sofaList[index].price * sofaList[index].qty;
                           sumList.add(sofaList[index].totalPrice); //[1,2, 3 4]
-                          print(sumList);
+                          //print(sumList);
+                          //print(sofaList);
                           //totalSum = sofaList[index].totalPrice;
                           //print('Total Sum:  $totalSum');
                           calculateSum(sumList); //[5089.0, 7899.0]
@@ -217,12 +217,18 @@ class _CartScreenState extends State<CartScreen> {
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
-                                      children: const [
-                                        Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
+                                      children: [
+                                        InkWell(
+                                          onTap : (){
+                                            var cartItem = sofaList[index];
+                                            context.read<CartBloc>().add(RemoveProductEvent(cartItem));
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
                                         ),
-                                        Icon(
+                                        const Icon(
                                           Icons.favorite,
                                           color: Colors.red,
                                         ),
