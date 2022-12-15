@@ -1,6 +1,12 @@
+
+import 'dart:io';
+
+import 'package:ecommerceappbloc/NewCode/CheckOutScreen/Check_Out.dart';
 import 'package:ecommerceappbloc/bloc/calculateSum/calculate_sum_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../bloc/exports.dart';
 
 class CartScreen extends StatefulWidget {
@@ -18,6 +24,12 @@ class _CartScreenState extends State<CartScreen> {
 
   double sum = 0;
 
+  String productName = '';
+  List<String> prodName = [];
+  List imgs = [];
+
+  String? profilepic;
+  File? f;
 
   //var sum = allSums.map((s) => s as double).toList();
   //var sum = allSums.fold(0, (previous, current) => previous + current);
@@ -33,16 +45,20 @@ class _CartScreenState extends State<CartScreen> {
         return BlocBuilder<CartBloc, CartState>(builder: (context, state) {
           List<SofaModel> sofaList = state.cartItem;
 
+          // for(int i=0; i<sofaList.length; i++){
+          //   prodName.add(sofaList[i].title);
+          // }
+          // print('ProdName: $prodName');
           void calculateSum(var list) {
             Iterable inReverse = list.reversed;
             for (int i = 0; i < inReverse.length; i++) {
               allSums = inReverse.take(state.cartItem.length).toList();
               //print(allSums);
               doubleSum = allSums.cast<double>();
-              print('Double Sum: $doubleSum');
+              //print('Double Sum: $doubleSum');
               sum = doubleSum.fold(0, (p, c) => p + c);
               context.read<CalculateSumCubit>().showData(sum);
-              print('Sum: $sum');
+              //print('Sum: $sum');
               //total = sum;
               //print('Sum List: $doubleSum');
               // //sum = doubleSum.sum;
@@ -54,7 +70,7 @@ class _CartScreenState extends State<CartScreen> {
           return Scaffold(
               appBar: AppBar(
                 title: Text(
-                  'Total items: ${sofaList.length}',
+                  'Items: ${sofaList.length}',
                   style: const TextStyle(
                     color: Colors.black,
                   ),
@@ -63,14 +79,40 @@ class _CartScreenState extends State<CartScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(25.r)),
                       child: Text(
-                        'Pay now $total',
+                        'Total $total',
                         style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w500),
+                            color: Colors.black, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CheckOutScreen(
+                                      subTotal: total,
+                                      productName: prodName,
+                                      //imgs: imgs,
+                                    )));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(25.r)),
+                        child: const Text(
+                          'Confirm',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
                   ),
@@ -83,8 +125,9 @@ class _CartScreenState extends State<CartScreen> {
                     child: ListView.separated(
                         scrollDirection: Axis.vertical,
                         itemBuilder: (_, index) {
-                          sofaList[index].totalPrice =
-                              sofaList[index].price * sofaList[index].qty;
+                          //titles = sofaList[index].title;
+                          imgs = sofaList[index].imgs;
+                          sofaList[index].totalPrice = sofaList[index].price * sofaList[index].qty;
                           sumList.add(sofaList[index].totalPrice); //[1,2, 3 4]
                           //print(sumList);
                           //print(sofaList);
@@ -93,6 +136,36 @@ class _CartScreenState extends State<CartScreen> {
                           calculateSum(sumList); //[5089.0, 7899.0]
                           //print(sofaList[index].totalPrice);
                           //print(sumList);
+
+
+
+                          var productIcon;
+                          productName = sofaList[index].title;
+                          productName.split(',');
+                          prodName.add(productName);
+                          //print(prodName);
+                          productIcon = sofaList[index].icon;
+                          //print(productName);
+                          //print(productIcon);
+
+                          // Future<File> getImageFileFromAssets(String path) async {
+                          //   final byteData = await rootBundle.load(path);
+                          //   final file = File('${(await getTemporaryDirectory()).path}/$path');
+                          //   await file.writeAsBytes(byteData.buffer
+                          //       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+                          //   return file;
+                          // }
+                          //
+                          // showimage() async{
+                          //   f = await getImageFileFromAssets(productIcon);
+                          //   //print('image converted successfully');
+                          //   //print(f);
+                          //   Uint8List imagebytes = await f!.readAsBytes();
+                          //   //print(imagebytes);
+                          //   profilepic = base64.encode(imagebytes);
+                          //   print(profilepic);
+                          // }
+                          // showimage();
 
                           return Container(
                             padding: EdgeInsets.only(
@@ -173,7 +246,10 @@ class _CartScreenState extends State<CartScreen> {
                                                       onTap: () {
                                                         setState(() {
                                                           sofaList[index].qty--;
-                                                          context.read<CalculateSumCubit>().showData(total);
+                                                          context
+                                                              .read<
+                                                                  CalculateSumCubit>()
+                                                              .showData(total);
                                                           calculateSum(sumList);
                                                           //context.read<CalculateSumCubit>().calculateSum(doubleSum);
                                                           //sumList.remove(totalPrice);
@@ -189,9 +265,13 @@ class _CartScreenState extends State<CartScreen> {
                                                       onTap: () {
                                                         setState(() {
                                                           sofaList[index].qty++;
-                                                          context.read<CalculateSumCubit>().showData(total);
+                                                          context
+                                                              .read<
+                                                                  CalculateSumCubit>()
+                                                              .showData(total);
                                                           calculateSum(sumList);
                                                           //context.read<CalculateSumCubit>().calculateSum(doubleSum);
+
                                                         });
                                                       },
                                                       child: const Icon(
@@ -219,9 +299,10 @@ class _CartScreenState extends State<CartScreen> {
                                           MainAxisAlignment.spaceEvenly,
                                       children: [
                                         InkWell(
-                                          onTap : (){
+                                          onTap: () {
                                             var cartItem = sofaList[index];
-                                            context.read<CartBloc>().add(RemoveProductEvent(cartItem));
+                                            context.read<CartBloc>().add(
+                                                RemoveProductEvent(cartItem));
                                           },
                                           child: const Icon(
                                             Icons.delete,

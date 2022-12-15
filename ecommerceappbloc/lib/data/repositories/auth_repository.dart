@@ -1,12 +1,17 @@
+import 'package:ecommerceappbloc/NewCode/Models/UserModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AuthRepository {
   final _firebaseAuth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   Future<void> signUp({required String email, required String password}) async {
     try {
       await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {postDataToFirestore(email, password)});
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         throw Exception('The password provided is too weak.');
@@ -16,6 +21,23 @@ class AuthRepository {
     } catch (e) {
       throw Exception(e.toString());
     }
+  }
+
+  // post data to firestore
+  postDataToFirestore(String email, String password) async{
+    User? user = _firebaseAuth.currentUser;
+
+    UserModel userModel = UserModel();
+    userModel.user_id = user!.uid;
+    userModel.user_email = email.toString();
+    userModel.user_password = password.toString();
+
+    await firebaseFirestore.collection("UserTable")
+        .doc(user.uid)
+        .set(userModel.toMap()
+    );
+
+    Fluttertoast.showToast(msg: "Account created successfully");
   }
 
   Future<void> signIn({required String email, required String password,}) async {
@@ -38,8 +60,6 @@ class AuthRepository {
       throw Exception(e);
     }
   }
-
-
 
 }
 
