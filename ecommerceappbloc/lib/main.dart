@@ -2,12 +2,13 @@ import 'package:ecommerceappbloc/NewCode/NavigationBar/Bottom_Navigation_bar.dar
 import 'package:ecommerceappbloc/bloc/auth_bloc/auth_bloc.dart';
 import 'package:ecommerceappbloc/bloc/calculateSum/calculate_sum_cubit.dart';
 import 'package:ecommerceappbloc/bloc/cart_bloc/cart_bloc.dart';
-import 'package:ecommerceappbloc/bloc/counter_bloc/counter_bloc.dart';
+import 'package:ecommerceappbloc/bloc/checkOut_bloc/order_bloc.dart';
 import 'package:ecommerceappbloc/bloc/exports.dart';
+import 'package:ecommerceappbloc/bloc/load_data_bloc/product_bloc.dart';
 import 'package:ecommerceappbloc/data/repositories/auth_repository.dart';
-import 'package:ecommerceappbloc/presentation/Dashboard/dashboard.dart';
+import 'package:ecommerceappbloc/data/repositories/checkout_repository.dart';
+import 'package:ecommerceappbloc/data/repositories/test_repository.dart';
 import 'package:ecommerceappbloc/presentation/SignIn/sign_in.dart';
-import 'package:ecommerceappbloc/presentation/tabbar.dart';
 import 'package:ecommerceappbloc/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:path_provider/path_provider.dart';
 
 
 Future<void> main() async {
@@ -27,8 +27,6 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-
-
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -37,9 +35,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => AuthBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
+        BlocProvider(create: (context) =>
+            AuthBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
+        BlocProvider(create: (context) =>
+            OrderBloc(checkOutRepository: RepositoryProvider.of<CheckOutRepository>(context))),
         BlocProvider(create: (context) => CartBloc()),
         BlocProvider(create: (context) => CalculateSumCubit()),
+        BlocProvider(create: (context) => ProductBloc(testProductRepository: TestProductRepository()))
       ],
       child: RepositoryProvider(
         create: (context) => AuthRepository(),
@@ -57,9 +59,10 @@ class MyApp extends StatelessWidget {
                     stream: FirebaseAuth.instance.authStateChanges(),
                     builder: (context, snapshot){
                       if (snapshot.hasData) {
+                        //TabbarScreen();
                         return const TabbarScreen();
                       }
-                      return SignIn();
+                      return const SignIn();
                     }
                 ),
               );

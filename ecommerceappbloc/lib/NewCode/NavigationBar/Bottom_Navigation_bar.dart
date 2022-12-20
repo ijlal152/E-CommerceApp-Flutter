@@ -69,7 +69,6 @@ class _TabbarScreenState extends State<TabbarScreen> {
       icon: Image.asset('assets/icons/tabbar/light/Profile@2x.png'),
       activeIcon: Image.asset('assets/icons/tabbar/bold/Profile@2x.png'),
       label: 'Profile',
-
     ),
   ];
 

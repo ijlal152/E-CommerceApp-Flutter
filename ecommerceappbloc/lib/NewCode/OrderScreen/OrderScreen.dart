@@ -1,12 +1,103 @@
-import 'package:flutter/material.dart';
 
-class OrderScreen extends StatelessWidget {
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerceappbloc/NewCode/Models/checkout_model.dart';
+import 'package:ecommerceappbloc/bloc/checkOut_bloc/order_bloc.dart';
+import 'package:ecommerceappbloc/bloc/load_data_bloc/product_bloc.dart';
+import 'package:ecommerceappbloc/data/repositories/checkout_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class OrderScreen extends StatefulWidget {
   const OrderScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  State<OrderScreen> createState() => _OrderScreenState();
+}
 
-    );
+
+
+class _OrderScreenState extends State<OrderScreen> {
+
+  final _firebaseAuth = FirebaseAuth.instance;
+  late final firestore ;
+  User? user;
+  CollectionReference? reference;
+
+  late OrderBloc orderBloc;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  final firebaseAuth = FirebaseAuth.instance;
+
+
+  @override
+  void initState() {
+    super.initState();
+    orderBloc = OrderBloc(checkOutRepository: CheckOutRepository());
+    orderBloc.add(GetDataEvent());
+    User? user = firebaseAuth.currentUser;
+    // firebaseFirestore.collection('UserTable').doc(user!.uid).collection('checkOut').get().then((value) => {
+    //   value.docs.forEach((result) {
+    //     print(result.data());
+    //   })
+    // });
+    //BlocProvider.of<OrderBloc>(context).add(GetDataEvent());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+  create: (context) => OrderBloc(checkOutRepository: CheckOutRepository()),
+  child: Scaffold(
+      appBar: AppBar(
+        title: const Text('Your orders', style: TextStyle(
+          color: Colors.black,
+        ),
+        ),
+      ),
+      body: BlocBuilder<OrderBloc, OrderState>(
+        builder: (context, state){
+          if(state is ProductLoadedState){
+            List<CheckOutModel> data = state.mydata;
+            //List dynamicData = state.mydata;
+            return ListView.builder(
+                itemCount: data.length,
+                itemBuilder: (_, index){
+                  return Card(
+                    child: ListTile(
+                      title: Text(data[index].productName.toString()),
+                      trailing: Text(data[index].totalAmount.toString()),
+                    ),
+                  );
+                }
+            );
+          } else if(state is ProductLoadingState){
+            return const Center(child: CircularProgressIndicator(),);
+          }else{
+            return Container();
+          }
+        },
+      ),
+      // body: StreamBuilder(
+      //     stream: FirebaseFirestore.instance.collection('UserTable').doc().collection('checkOut').snapshots(),
+      //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
+      //       if(snapshot.hasData){
+      //         return ListView.builder(
+      //             itemCount: snapshot.data!.docs.length,
+      //             itemBuilder: (context, index){
+      //               return ListTile(
+      //                 title: Text(snapshot.data!.docs[index]['productName'].toString()),
+      //                 subtitle: Text(snapshot.data!.docs[index]['totalAmount'].toString()),
+      //               );
+      //             }
+      //         );
+      //       }else{
+      //         return const Center(child: CircularProgressIndicator(),);
+      //       }
+      //       return Container();
+      //     }
+      // ),
+    ),
+);
   }
 }

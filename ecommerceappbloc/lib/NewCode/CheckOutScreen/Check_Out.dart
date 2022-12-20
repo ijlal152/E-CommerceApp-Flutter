@@ -102,7 +102,6 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                   SizedBox(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         Text('CUSTOMER INFORMATION', style: TextStyle(
                             fontSize: 17.sp,
@@ -359,16 +358,18 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           totalAmount: sum,
           productName: checkOutData
       );
-      await firebaseFirestore.collection('UserTable')
-          .doc(user!.uid)
-          .collection('checkOut')
-          .add(checkOutModel.toMap()).then(
+      try{
+        await firebaseFirestore.collection('UserTable')
+            .doc(user!.uid)
+            .collection('checkOut')
+            .add(checkOutModel.toMap()).then(
               (value) => Fluttertoast.showToast(msg: "Order has been placed"),
-      );
+        );
+      }on FirebaseException catch(e){
+        Fluttertoast.showToast(msg: e.toString());
+      } catch (e){
+        throw Exception(e.toString());
+      }
     }
-    print(widget.productName);
-    //print('Product Names: $checkOutData');
-    //firebaseFirestore.collection('UserTable').doc(user!.uid);
-    //print(firebaseFirestore.collection('UserTable').doc(user!.uid));
   }
 }

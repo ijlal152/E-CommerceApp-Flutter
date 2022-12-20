@@ -25,7 +25,7 @@ class CheckOutModel {
       "city": city,
       "zipCode": zipCode,
       "totalAmount": totalAmount,
-      "productName": jsonEncode(productName),
+      "productName": jsonEncode(productName).toString(),
     };
   }
 
@@ -36,10 +36,8 @@ class CheckOutModel {
       address: map["address"],
       city: map["city"],
       zipCode: map["zipCode"],
-      totalAmount: double.parse(map["totalAmount"]),
-      productName: List.of(map["productName"])
-          .map((i) => i /* can't generate it properly yet */)
-          .toList(),
+      totalAmount: double.parse(map["totalAmount"].toString()),
+      productName: List.of(map["productName"]).map((i) => i).toList(),
     );
   }
 //
