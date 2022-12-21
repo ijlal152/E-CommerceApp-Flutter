@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerceappbloc/NewCode/Models/checkout_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class CheckOutRepository{
@@ -12,7 +11,7 @@ class CheckOutRepository{
 
   Future<List<CheckOutModel>> getData() async{
     List<CheckOutModel> orderList = [];
-    //var fetchedData = [];
+
     try{
       //final firebaseAuth = FirebaseAuth.instance;
       //User? user = firebaseAuth.currentUser;

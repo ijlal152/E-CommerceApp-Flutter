@@ -55,8 +55,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
   }
 
   List checkOutData = [];
-
+  List<String> checkOutStringData = [];
   List titlesOfProduct = [];
+  String productNamesInString = '';
 
 
   @override
@@ -70,7 +71,12 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       checkOutData = titlesOfProduct.take(testVariable.length).toList();
       //titlesOfProduct.clear();
     }
+    //List<String> checkOutStringData;
+    checkOutStringData = checkOutData.cast<String>();
+    var newData = checkOutStringData.join(', ');
+    print(newData);
     print('Checkout Data: $checkOutData');
+    print('String Data: $checkOutStringData');
     // print('Titles of Products: $titlesOfProduct');
 
 
@@ -356,7 +362,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
           city: city.text,
           zipCode: zipCode.text,
           totalAmount: sum,
-          productName: checkOutData
+          productName: productNamesInString
       );
       try{
         await firebaseFirestore.collection('UserTable')

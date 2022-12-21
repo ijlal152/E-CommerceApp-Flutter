@@ -8,7 +8,7 @@ class CheckOutModel {
   String city;
   String zipCode;
   double totalAmount;
-  List productName;
+  String productName;
   //List<SofaModel> sofaModelCart;
 
   CheckOutModel({required this.fullName, required this.phoneNo,
@@ -25,19 +25,20 @@ class CheckOutModel {
       "city": city,
       "zipCode": zipCode,
       "totalAmount": totalAmount,
-      "productName": jsonEncode(productName).toString(),
+      "productName": productName,
     };
   }
 
   factory CheckOutModel.fromJson(Map<String, dynamic> map) {
     return CheckOutModel(
-      fullName: map["fullName"],
-      phoneNo: map["phoneNo"],
-      address: map["address"],
-      city: map["city"],
-      zipCode: map["zipCode"],
+      fullName: map["fullName"].toString(),
+      phoneNo: map["phoneNo"].toString(),
+      address: map["address"].toString(),
+      city: map["city"].toString(),
+      zipCode: map["zipCode"].toString(),
       totalAmount: double.parse(map["totalAmount"].toString()),
-      productName: List.of(map["productName"]).map((i) => i).toList(),
+      productName: map["productName"].toString()
+      //productName: List.of(map["productName"]).map((i) => i).toList(),
     );
   }
 //

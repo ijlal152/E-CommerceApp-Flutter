@@ -59,22 +59,22 @@ class _OrderScreenState extends State<OrderScreen> {
         builder: (context, state){
           if(state is ProductLoadedState){
             List<CheckOutModel> data = state.mydata;
-            //List dynamicData = state.mydata;
+            //print('Fetched Data is: $data');
             return ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (_, index){
                   return Card(
                     child: ListTile(
-                      title: Text(data[index].productName.toString()),
-                      trailing: Text(data[index].totalAmount.toString()),
+                      title: Text(data[index].productName.toString(), style: TextStyle(color: Colors.black),),
+                      trailing: Text(data[index].totalAmount.toString(), style: TextStyle(color: Colors.black),),
                     ),
                   );
                 }
             );
           } else if(state is ProductLoadingState){
-            return const Center(child: CircularProgressIndicator(),);
+            return const Center(child: CircularProgressIndicator(color: Colors.green,),);
           }else{
-            return Container();
+            return const Center(child: Text('No Order'),);
           }
         },
       ),
