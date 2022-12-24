@@ -9,6 +9,25 @@ class OrderInitial extends OrderState {
   List<Object> get props => [];
 }
 
+class OrderAddingState extends OrderState{
+
+  @override
+  List<Object> get props => [];
+}
+
+class OrderAddedState extends OrderState{
+
+  @override
+  List<Object> get props => [];
+}
+
+class OrderNotAddedState extends OrderState{
+  final String errorMessage;
+  OrderNotAddedState(this.errorMessage);
+  @override
+  List<Object> get props => [errorMessage];
+}
+
 class ProductLoadingState extends OrderState{
   @override
   // TODO: implement props

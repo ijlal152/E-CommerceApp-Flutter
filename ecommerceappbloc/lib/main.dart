@@ -33,41 +33,47 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(create: (context) =>
-            AuthBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
-        BlocProvider(create: (context) =>
-            OrderBloc(checkOutRepository: RepositoryProvider.of<CheckOutRepository>(context))),
-        BlocProvider(create: (context) => CartBloc()),
-        BlocProvider(create: (context) => CalculateSumCubit()),
-        BlocProvider(create: (context) => ProductBloc(testProductRepository: TestProductRepository()))
+        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
+        RepositoryProvider<CheckOutRepository>(create: (context) => CheckOutRepository()),
       ],
-      child: RepositoryProvider(
-        create: (context) => AuthRepository(),
-        child: BlocProvider(
-          create: (context) => AuthBloc(
-              authRepository: RepositoryProvider.of<AuthRepository>(context),
-          ),
-          child: ScreenUtilInit(
-            designSize: const Size(412, 892),
-            builder: (context, child){
-              return MaterialApp(
-                theme: appTheme(),
-                debugShowCheckedModeBanner: false,
-                home: StreamBuilder<User?>(
-                    stream: FirebaseAuth.instance.authStateChanges(),
-                    builder: (context, snapshot){
-                      if (snapshot.hasData) {
-                        //TabbarScreen();
-                        return const TabbarScreen();
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) =>
+              AuthBloc(authRepository: RepositoryProvider.of<AuthRepository>(context))),
+          BlocProvider(create: (context) =>
+              OrderBloc(checkOutRepository: RepositoryProvider.of<CheckOutRepository>(context))),
+          BlocProvider(create: (context) => CartBloc()),
+          BlocProvider(create: (context) => CalculateSumCubit()),
+          BlocProvider(create: (context) => ProductBloc(testProductRepository: TestProductRepository()))
+        ],
+        child: RepositoryProvider(
+          create: (context) => AuthRepository(),
+          child: BlocProvider(
+            create: (context) => AuthBloc(
+                authRepository: RepositoryProvider.of<AuthRepository>(context),
+            ),
+            child: ScreenUtilInit(
+              designSize: const Size(412, 892),
+              builder: (context, child){
+                return MaterialApp(
+                  theme: appTheme(),
+                  debugShowCheckedModeBanner: false,
+                  home: StreamBuilder<User?>(
+                      stream: FirebaseAuth.instance.authStateChanges(),
+                      builder: (context, snapshot){
+                        if (snapshot.hasData) {
+                          //TabbarScreen();
+                          return const TabbarScreen();
+                        }
+                        return const SignIn();
                       }
-                      return const SignIn();
-                    }
-                ),
-              );
-            },
-          )
+                  ),
+                );
+              },
+            )
+          ),
         ),
       ),
     );

@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerceappbloc/NewCode/Models/checkout_model.dart';
 import 'package:ecommerceappbloc/bloc/checkOut_bloc/order_bloc.dart';
@@ -17,11 +15,11 @@ class OrderScreen extends StatefulWidget {
 }
 
 
-
 class _OrderScreenState extends State<OrderScreen> {
 
   final _firebaseAuth = FirebaseAuth.instance;
-  late final firestore ;
+  late final firestore;
+
   User? user;
   CollectionReference? reference;
 
@@ -33,22 +31,24 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   void initState() {
     super.initState();
-    orderBloc = OrderBloc(checkOutRepository: CheckOutRepository());
-    orderBloc.add(GetDataEvent());
+    //orderBloc = OrderBloc(checkOutRepository: CheckOutRepository());
+    //orderBloc.add(GetDataEvent());
     User? user = firebaseAuth.currentUser;
     // firebaseFirestore.collection('UserTable').doc(user!.uid).collection('checkOut').get().then((value) => {
     //   value.docs.forEach((result) {
     //     print(result.data());
     //   })
     // });
-    //BlocProvider.of<OrderBloc>(context).add(GetDataEvent());
+    BlocProvider.of<OrderBloc>(context).add(GetDataEvent());
   }
+
+  final GlobalKey<ScaffoldState> _Scaffoldkey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-  create: (context) => OrderBloc(checkOutRepository: CheckOutRepository()),
-  child: Scaffold(
+    //BlocProvider.of<OrderBloc>(context).add(GetDataEvent());
+    return Scaffold(
+      key: _Scaffoldkey,
       appBar: AppBar(
         title: const Text('Your orders', style: TextStyle(
           color: Colors.black,
@@ -56,48 +56,32 @@ class _OrderScreenState extends State<OrderScreen> {
         ),
       ),
       body: BlocBuilder<OrderBloc, OrderState>(
-        builder: (context, state){
-          if(state is ProductLoadedState){
+        builder: (context, state) {
+          //BlocProvider.of<OrderBloc>(context).add(GetDataEvent());
+          if (state is ProductLoadedState) {
             List<CheckOutModel> data = state.mydata;
             //print('Fetched Data is: $data');
             return ListView.builder(
                 itemCount: data.length,
-                itemBuilder: (_, index){
+                itemBuilder: (_, index) {
                   return Card(
                     child: ListTile(
-                      title: Text(data[index].productName.toString(), style: TextStyle(color: Colors.black),),
-                      trailing: Text(data[index].totalAmount.toString(), style: TextStyle(color: Colors.black),),
+                      title: Text(data[index].productName.toString(),
+                        style: const TextStyle(color: Colors.black),),
+                      trailing: Text(data[index].totalAmount.toString(),
+                        style: const TextStyle(color: Colors.black),),
                     ),
                   );
                 }
             );
-          } else if(state is ProductLoadingState){
-            return const Center(child: CircularProgressIndicator(color: Colors.green,),);
-          }else{
+          } else if (state is ProductLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.green,),);
+          } else {
             return const Center(child: Text('No Order'),);
           }
         },
       ),
-      // body: StreamBuilder(
-      //     stream: FirebaseFirestore.instance.collection('UserTable').doc().collection('checkOut').snapshots(),
-      //     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot>snapshot){
-      //       if(snapshot.hasData){
-      //         return ListView.builder(
-      //             itemCount: snapshot.data!.docs.length,
-      //             itemBuilder: (context, index){
-      //               return ListTile(
-      //                 title: Text(snapshot.data!.docs[index]['productName'].toString()),
-      //                 subtitle: Text(snapshot.data!.docs[index]['totalAmount'].toString()),
-      //               );
-      //             }
-      //         );
-      //       }else{
-      //         return const Center(child: CircularProgressIndicator(),);
-      //       }
-      //       return Container();
-      //     }
-      // ),
-    ),
-);
+    );
   }
 }

@@ -19,6 +19,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       await Future.delayed(const Duration(seconds: 1));
       try{
         final data = await checkOutRepository.getData();
+        //print(data);
         emit(ProductLoadedState(data));
       }catch (e){
         emit(ProductErrorState(e.toString()));
